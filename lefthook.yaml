@@ -1,0 +1,10 @@
+# lefthook docs
+# https://github.com/Arkweid/lefthook/blob/master/docs/full_guide.md
+pre-commit:
+  commands:
+    terraformfmt:
+      glob: "*.{tf,tfvars}"
+      run: terraform fmt | xargs git add
+  scripts:
+    terraformdocs:
+      runner: bash
