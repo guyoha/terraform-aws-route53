@@ -26,3 +26,23 @@ output "dns_records" {
     }
   }
 }
+
+output "dns_alias_records" {
+  description = "Output List of records per zone"
+  value = {
+    for zoneKey, zone in aws_route53_zone.this :
+    zoneKey => {
+      comment = zone.comment
+      zone_id = zone.id
+      records = [
+        for k, record in aws_route53_record.alias_records : {
+          name    = record.name
+          records = record.records
+          type    = record.type
+          alias   = record.alias
+
+        }
+      ]
+    }
+  }
+}

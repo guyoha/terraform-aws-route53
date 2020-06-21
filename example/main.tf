@@ -1,6 +1,7 @@
 
 module "dns_records" {
   source = "../"
+  enable_alias_records = true
   zone_records = {
     "testzone.com" = {
       "comment" = "test zone"
@@ -11,4 +12,16 @@ module "dns_records" {
       ]
     }
   }
+
+  zone_alias_records = {
+    "testzone.com" = {
+      "comment" = "test zone"
+      "records" = [
+        {name="",type="A",alias="dualstack.<ELB DNS>.", alias_elb_hosted_zone="<ELB Zone ID>", evaluate_target_health=false}
+      ]
+    }
+
+  }
+
 }
+

@@ -25,6 +25,19 @@ locals {
       }
     ]
   ])
+  alias_records = flatten([
+    for zoneName, zone in var.zone_alias_records : [
+      for record in lookup(zone, "records") : {
+        zone                   = zoneName
+        name                   = record.name
+        alias                  = record.alias
+        type                   = record.type
+        alias_elb_hosted_zone  = record.alias_elb_hosted_zone
+        evaluate_target_health = record.evaluate_target_health
+      }
+    ]
+  ])
+  enable_alias_records = var.enable_alias_records
 }
 
 locals {
@@ -57,7 +70,21 @@ resource "aws_route53_record" "this" {
   records = each.value.values
 }
 
+resource "aws_route53_record" "alias_records" {
+  for_each = {
+    for r in local.alias_records : "${r.zone}.${r.type}.${r.name}.${r.alias}.${r.alias_elb_hosted_zone}.${r.evaluate_target_health}} " => r
+    if local.enable_alias_records
+  }
 
+  name    = each.value.name
+  zone_id = aws_route53_zone.this[each.value.zone].zone_id
+  type    = each.value.type
+  alias {
+    evaluate_target_health = each.value.evaluate_target_health
+    name                   = each.value.alias
+    zone_id                = each.value.alias_elb_hosted_zone
+  }
+}
 
 
 
