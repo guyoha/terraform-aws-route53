@@ -60,7 +60,7 @@ resource "aws_route53_zone" "this" {
 # Create records
 resource "aws_route53_record" "this" {
   for_each = {
-    for r in local.records : "${r.zone}.${r.type}.${r.name}.${r.ttl}.${join(",", r.values)} " => r
+    for r in local.records : "${r.zone}.${r.type}.${r.name}.${r.ttl}}" => r
   }
 
   name    = each.value.name
@@ -72,7 +72,7 @@ resource "aws_route53_record" "this" {
 
 resource "aws_route53_record" "alias_records" {
   for_each = {
-    for r in local.alias_records : "${r.zone}.${r.type}.${r.name}.${r.alias}.${r.alias_elb_hosted_zone}.${r.evaluate_target_health}} " => r
+    for r in local.alias_records : "${r.zone}.${r.type}.${r.name}.${r.alias}.${r.alias_elb_hosted_zone}.${r.evaluate_target_health}" => r
     if local.enable_alias_records
   }
 
