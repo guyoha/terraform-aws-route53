@@ -60,7 +60,7 @@ resource "aws_route53_zone" "this" {
 # Create records
 resource "aws_route53_record" "this" {
   for_each = {
-    for r in local.records : "${r.zone}.${r.type}.${r.name}.${r.ttl}}" => r
+    for r in local.records : "${r.zone}.${r.type}.${r.name}.${r.ttl}" => r
   }
 
   name    = each.value.name
